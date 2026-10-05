@@ -1,0 +1,62 @@
+[
+  {
+    "source": "announcement.txt",
+    "destination": "publicity/announcement.txt",
+    "reason": "Event notification draft reminding members to bring notebooks with location/time undecided; categorized under publicity."
+  },
+  {
+    "source": "announcement_copy.txt",
+    "destination": "publicity/announcement_copy.txt",
+    "reason": "Exact byte-for-byte duplicate copy of announcement.txt; preserved without overwriting under publicity."
+  },
+  {
+    "source": "budget_draft.txt",
+    "destination": "resources/budget_draft.txt",
+    "reason": "Draft paper budget estimate (unapproved expense); categorized under resources."
+  },
+  {
+    "source": "equipment_backup.txt",
+    "destination": "resources/equipment_backup.txt",
+    "reason": "Exact byte-for-byte duplicate copy of equipment_list.txt; backup inventory preserved under resources."
+  },
+  {
+    "source": "equipment_list.txt",
+    "destination": "resources/equipment_list.txt",
+    "reason": "Club equipment inventory list (markers and paper packs); categorized under resources."
+  },
+  {
+    "source": "feedback_questions.txt",
+    "destination": "feedback/feedback_questions.txt",
+    "reason": "Post-activity reflection and feedback questionnaire; categorized under feedback."
+  },
+  {
+    "source": "meeting_notes.txt",
+    "destination": "planning/meeting_notes.txt",
+    "reason": "Club meeting minutes discussing choice between indoor and outdoor activities; categorized under planning."
+  },
+  {
+    "source": "next_steps.txt",
+    "destination": "planning/next_steps.txt",
+    "reason": "Action items directing comparison of both proposals without assuming either is approved; categorized under planning."
+  },
+  {
+    "source": "poster_text.txt",
+    "destination": "publicity/poster_text.txt",
+    "reason": "Promotional poster slogan and creative copy; categorized under publicity."
+  },
+  {
+    "source": "proposal_final.txt",
+    "destination": "planning/proposal_final.txt",
+    "reason": "Proposal Version 1 (outdoor activity, 30 minutes, unfinalized); preserved under planning."
+  },
+  {
+    "source": "proposal_final2.txt",
+    "destination": "planning/proposal_final2.txt",
+    "reason": "Proposal Version 2 (indoor activity, 20 minutes, pending discussion); preserved under planning as an independent version."
+  },
+  {
+    "source": "rain_plan.txt",
+    "destination": "planning/rain_plan.txt",
+    "reason": "Contingency plan for rain directing discussion of indoor alternative; categorized under planning."
+  }
+]
