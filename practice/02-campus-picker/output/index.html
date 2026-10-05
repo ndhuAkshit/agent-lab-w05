@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>課間我想做什麼？ · Campus Activity Picker</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 24px 16px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 680px;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px 24px;
+      border: 1px solid var(--border);
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+      gap: 12px;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .disclaimer {
+      font-size: 0.82rem;
+      color: #dc2626;
+      font-weight: 500;
+      margin-top: 4px;
+    }
+    .lang-toggle {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      transition: background-color 0.15s;
+    }
+    .lang-toggle:hover {
+      background: #e2e8f0;
+    }
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    label {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #334155;
+    }
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background-color: #fff;
+      font-size: 0.95rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    button.btn-pick {
+      flex: 2;
+      min-width: 140px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    button.btn-pick:hover {
+      background: var(--primary-hover);
+    }
+    button.btn-reset {
+      flex: 1;
+      min-width: 100px;
+      background: #f1f5f9;
+      color: #334155;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    button.btn-reset:hover {
+      background: #e2e8f0;
+    }
+    .result-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 24px;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .result-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .result-content {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #0f172a;
+    }
+    .result-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: #475569;
+    }
+    .result-tag {
+      background: #e2e8f0;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      font-weight: 500;
+    }
+    .result-empty {
+      color: #b91c1c;
+      font-weight: 600;
+      font-size: 1rem;
+      text-align: center;
+      padding: 12px 0;
+    }
+    .history-section {
+      border-top: 1px solid var(--border);
+      padding-top: 18px;
+    }
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .history-header h2 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #1e293b;
+    }
+    .btn-clear {
+      background: none;
+      border: none;
+      color: #dc2626;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+    .btn-clear:hover {
+      background: #fee2e2;
+    }
+    .history-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+    }
+    .history-item-name {
+      font-weight: 600;
+      color: #0f172a;
+    }
+    .history-item-meta {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    .history-empty {
+      font-size: 0.88rem;
+      color: var(--muted);
+      text-align: center;
+      padding: 12px 0;
+      font-style: italic;
+    }
+    footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div>
+      <h1 id="ui-title">課間我想做什麼？</h1>
+      <p class="disclaimer" id="ui-disclaimer">教學模擬活動，不是校方公告</p>
+    </div>
+    <button class="lang-toggle" id="lang-btn" onclick="toggleLanguage()">EN / 中文</button>
+  </header>
+
+  <div class="filter-grid">
+    <div class="field-group">
+      <label for="location-select" id="lbl-location">地點</label>
+      <select id="location-select">
+        <option value="all">不限</option>
+        <option value="indoor">室內</option>
+        <option value="outdoor">室外</option>
+      </select>
+    </div>
+
+    <div class="field-group">
+      <label for="time-select" id="lbl-time">可用時間</label>
+      <select id="time-select">
+        <option value="15">15 分鐘</option>
+        <option value="30" selected>30 分鐘</option>
+        <option value="60">60 分鐘</option>
+      </select>
+    </div>
+
+    <div class="field-group">
+      <label for="energy-select" id="lbl-energy">活動強度</label>
+      <select id="energy-select">
+        <option value="all">不限</option>
+        <option value="low">低</option>
+        <option value="medium">中</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="button-group">
+    <button class="btn-pick" id="btn-pick" onclick="pickActivity()">幫我選</button>
+    <button class="btn-reset" id="btn-reset" onclick="resetFilters()">重設篩選</button>
+  </div>
+
+  <div class="result-box" id="result-box">
+    <div class="result-title" id="ui-pick-result">抽選結果</div>
+    <div id="result-display" style="color: var(--muted); font-size: 0.95rem;">請點擊「幫我選」開始抽選</div>
+  </div>
+
+  <section class="history-section">
+    <div class="history-header">
+      <h2 id="ui-history-title">最近 5 次成功抽選</h2>
+      <button class="btn-clear" id="btn-clear" onclick="clearHistory()">清除紀錄</button>
+    </div>
+    <ul class="history-list" id="history-list">
+      <li class="history-empty" id="history-empty">尚無抽選紀錄</li>
+    </ul>
+  </section>
+</div>
+
+<footer>
+  NDHU Campus Agent Lab · Practice 02-campus-picker
+</footer>
+
+<script>
+// 12 筆模擬活動資料（不修改原始 activities.json，內嵌離線使用）
+const activities = [
+  { id: "A01", name_zh: "整理書包", name_en: "Organize your bag", location_type: "indoor", minutes: 10, energy: "low" },
+  { id: "A02", name_zh: "畫一張小卡", name_en: "Draw a small card", location_type: "indoor", minutes: 15, energy: "low" },
+  { id: "A03", name_zh: "寫三句讀書筆記", name_en: "Write three study notes", location_type: "indoor", minutes: 10, energy: "low" },
+  { id: "A04", name_zh: "安靜讀兩頁書", name_en: "Read two pages quietly", location_type: "indoor", minutes: 15, energy: "low" },
+  { id: "A05", name_zh: "排好明日待辦", name_en: "Plan tomorrow’s tasks", location_type: "indoor", minutes: 20, energy: "low" },
+  { id: "A06", name_zh: "整理本機練習檔", name_en: "Organize practice files", location_type: "indoor", minutes: 30, energy: "medium" },
+  { id: "A07", name_zh: "在合適位置慢走", name_en: "Take a gentle walk in a suitable area", location_type: "outdoor", minutes: 15, energy: "low" },
+  { id: "A08", name_zh: "觀察天空並畫草圖", name_en: "Observe the sky and sketch", location_type: "outdoor", minutes: 20, energy: "low" },
+  { id: "A09", name_zh: "在合適位置快走", name_en: "Take a brisk walk in a suitable area", location_type: "outdoor", minutes: 30, energy: "medium" },
+  { id: "A10", name_zh: "規劃小組練習", name_en: "Plan a group exercise", location_type: "indoor", minutes: 45, energy: "medium" },
+  { id: "A11", name_zh: "記錄自然色彩", name_en: "Record colors in nature", location_type: "outdoor", minutes: 45, energy: "low" },
+  { id: "A12", name_zh: "構思下一次社團活動", name_en: "Brainstorm a future club activity", location_type: "indoor", minutes: 60, energy: "medium" }
+];
+
+let currentLang = 'zh';
+let history = []; // 最近 5 次成功抽選記錄
+
+const i18n = {
+  zh: {
+    title: "課間我想做什麼？",
+    disclaimer: "教學模擬活動，不是校方公告",
+    location: "地點",
+    time: "可用時間",
+    energy: "活動強度",
+    optAll: "不限",
+    optIndoor: "室內",
+    optOutdoor: "室外",
+    optLow: "低",
+    optMedium: "中",
+    minSuffix: " 分鐘",
+    btnPick: "幫我選",
+    btnReset: "重設篩選",
+    resultTitle: "抽選結果",
+    emptyPrompt: "請點擊「幫我選」開始抽選",
+    noMatch: "沒有符合條件的活動",
+    historyTitle: "最近 5 次成功抽選",
+    btnClear: "清除紀錄",
+    historyEmpty: "尚無抽選紀錄",
+    locIndoor: "室內",
+    locOutdoor: "室外",
+    energyLow: "低強度",
+    energyMedium: "中強度",
+    minutesLabel: "分鐘"
+  },
+  en: {
+    title: "What to do during class break?",
+    disclaimer: "Teaching simulation activity, not an official campus announcement",
+    location: "Location",
+    time: "Available Time",
+    energy: "Activity Intensity",
+    optAll: "All",
+    optIndoor: "Indoor",
+    optOutdoor: "Outdoor",
+    optLow: "Low",
+    optMedium: "Medium",
+    minSuffix: " mins",
+    btnPick: "Pick for me",
+    btnReset: "Reset Filters",
+    resultTitle: "Selected Activity",
+    emptyPrompt: "Click \"Pick for me\" to start",
+    noMatch: "No matching activities found",
+    historyTitle: "Recent 5 Successful Picks",
+    btnClear: "Clear History",
+    historyEmpty: "No pick history yet",
+    locIndoor: "Indoor",
+    locOutdoor: "Outdoor",
+    energyLow: "Low energy",
+    energyMedium: "Medium energy",
+    minutesLabel: "mins"
+  }
+};
+
+let lastPicked = null;
+
+function renderTexts() {
+  const t = i18n[currentLang];
+  document.documentElement.lang = currentLang === 'zh' ? 'zh-Hant' : 'en';
+  document.getElementById('ui-title').innerText = t.title;
+  document.getElementById('ui-disclaimer').innerText = t.disclaimer;
+  document.getElementById('lbl-location').innerText = t.location;
+  document.getElementById('lbl-time').innerText = t.time;
+  document.getElementById('lbl-energy').innerText = t.energy;
+  document.getElementById('btn-pick').innerText = t.btnPick;
+  document.getElementById('btn-reset').innerText = t.btnReset;
+  document.getElementById('ui-pick-result').innerText = t.resultTitle;
+  document.getElementById('ui-history-title').innerText = t.historyTitle;
+  document.getElementById('btn-clear').innerText = t.btnClear;
+
+  // Options
+  const locSel = document.getElementById('location-select');
+  locSel.options[0].text = t.optAll;
+  locSel.options[1].text = t.optIndoor;
+  locSel.options[2].text = t.optOutdoor;
+
+  const timeSel = document.getElementById('time-select');
+  timeSel.options[0].text = "15" + t.minSuffix;
+  timeSel.options[1].text = "30" + t.minSuffix;
+  timeSel.options[2].text = "60" + t.minSuffix;
+
+  const energySel = document.getElementById('energy-select');
+  energySel.options[0].text = t.optAll;
+  energySel.options[1].text = t.optLow;
+  energySel.options[2].text = t.optMedium;
+
+  // Refresh current display
+  if (lastPicked === null) {
+    document.getElementById('result-display').innerHTML = `<span style="color: var(--muted); font-size: 0.95rem;">${t.emptyPrompt}</span>`;
+  } else if (lastPicked === false) {
+    document.getElementById('result-display').innerHTML = `<div class="result-empty">${t.noMatch}</div>`;
+  } else {
+    displayResult(lastPicked);
+  }
+
+  renderHistory();
+}
+
+function toggleLanguage() {
+  currentLang = currentLang === 'zh' ? 'en' : 'zh';
+  renderTexts();
+}
+
+function getFilterValues() {
+  return {
+    location: document.getElementById('location-select').value,
+    time: parseInt(document.getElementById('time-select').value, 10),
+    energy: document.getElementById('energy-select').value
+  };
+}
+
+function pickActivity() {
+  const { location, time, energy } = getFilterValues();
+
+  // 嚴格篩選：必須同時符合地點、時間上限、強度
+  const matched = activities.filter(act => {
+    const locMatch = (location === 'all') || (act.location_type === location);
+    const timeMatch = act.minutes <= time;
+    const energyMatch = (energy === 'all') || (act.energy === energy);
+    return locMatch && timeMatch && energyMatch;
+  });
+
+  const displayEl = document.getElementById('result-display');
+  const t = i18n[currentLang];
+
+  if (matched.length === 0) {
+    lastPicked = false;
+    displayEl.innerHTML = `<div class="result-empty">${t.noMatch}</div>`;
+    // 無結果不加入歷史紀錄
+    return;
+  }
+
+  // 隨機選一個
+  const randomIndex = Math.floor(Math.random() * matched.length);
+  const selected = matched[randomIndex];
+  lastPicked = selected;
+
+  displayResult(selected);
+
+  // 記錄至歷史（最新在前，最多保留5筆）
+  history.unshift(selected);
+  if (history.length > 5) {
+    history.pop();
+  }
+  renderHistory();
+}
+
+function displayResult(act) {
+  const t = i18n[currentLang];
+  const name = currentLang === 'zh' ? act.name_zh : act.name_en;
+  const loc = act.location_type === 'indoor' ? t.locIndoor : t.locOutdoor;
+  const energy = act.energy === 'low' ? t.energyLow : t.energyMedium;
+
+  document.getElementById('result-display').innerHTML = `
+    <div class="result-content">[${act.id}] ${name}</div>
+    <div class="result-meta">
+      <span class="result-tag">⏱️ ${act.minutes} ${t.minutesLabel}</span>
+      <span class="result-tag">📍 ${loc}</span>
+      <span class="result-tag">⚡ ${energy}</span>
+    </div>
+  `;
+}
+
+function resetFilters() {
+  // 回到不限地點、30分鐘、不限強度
+  document.getElementById('location-select').value = 'all';
+  document.getElementById('time-select').value = '30';
+  document.getElementById('energy-select').value = 'all';
+  // 不清除紀錄
+}
+
+function clearHistory() {
+  history = [];
+  renderHistory();
+}
+
+function renderHistory() {
+  const listEl = document.getElementById('history-list');
+  const t = i18n[currentLang];
+
+  if (history.length === 0) {
+    listEl.innerHTML = `<li class="history-empty" id="history-empty">${t.historyEmpty}</li>`;
+    return;
+  }
+
+  listEl.innerHTML = history.map((act, index) => {
+    const name = currentLang === 'zh' ? act.name_zh : act.name_en;
+    const loc = act.location_type === 'indoor' ? t.locIndoor : t.locOutdoor;
+    const energy = act.energy === 'low' ? t.energyLow : t.energyMedium;
+    return `
+      <li class="history-item">
+        <span class="history-item-name">#${index + 1} [${act.id}] ${name}</span>
+        <span class="history-item-meta">${act.minutes} ${t.minutesLabel} · ${loc} · ${energy}</span>
+      </li>
+    `;
+  }).join('');
+}
+
+// 初始化
+renderTexts();
+</script>
+
+</body>
+</html>
